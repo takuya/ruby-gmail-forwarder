@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'lib/**'
+      - 'spec/**'
       - '.github/workflows/rspec.yml'
   schedule:
     - cron:  '0 11 */4 * *'

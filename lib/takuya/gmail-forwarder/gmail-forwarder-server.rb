@@ -1,7 +1,8 @@
 module Takuya
   # Server class
   class GMailForwarderServer<MidiSmtpServer::Smtpd
-    VERSION='0.1.0'
+    VERSION = '0.1.0'
+
     def initialize(user_id: nil, password: nil, client_secret_path: nil, token_path: nil, **args)
       super(internationalization_extensions: true, **args)
       unless user_id && (password || (client_secret_path && token_path))
@@ -35,6 +36,7 @@ module Takuya
       $stderr.puts e.message
       $stderr.puts e.backtrace
     end
+
     ## modify proxied mail as your need.
     # @return envelope_from, envelope_to, mail
     # @param mail [Mail::Message]

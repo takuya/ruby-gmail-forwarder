@@ -1,5 +1,6 @@
-
-module Takuya; end
+module Takuya
+  ;
+end
 
 ## rubygems.org
 require 'midi-smtp-server'
