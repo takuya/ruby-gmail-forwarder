@@ -1,0 +1,53 @@
+name: "rspec spec/"
+
+on:
+  push:
+    branch:
+      - master
+    paths:
+      - 'lib/**'
+      - '.github/workflows/rspec.yml'
+  schedule:
+    - cron:  '0 11 */4 * *'
+
+jobs:
+  test-GMail-API-xoauth2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name : apt
+        run : |
+          sudo apt-get update && sudo apt-get -y install jq
+      - name : 環境変数から認証情報・トークンを取り出し。
+        run : |
+          pwd
+          echo 環境変数のメモ
+          echo expected variables
+          echo Google-GCP-OAUTH2-client
+          echo "---------------------------"
+          echo "--- client_secret"
+          echo "---------------------------"
+          echo "${{ secrets.CLIENT_SECRET_JSON_BASE64 }}"| base64 -d  >>  credentials/client_secret.json
+          cat credentials/client_secret.json | jq '.web | {"project":.project_id,"client": .client_id}'
+          echo "---------------------------"
+          echo "--- token"
+          echo "---------------------------"
+          echo "${{ secrets.TOKENS_YAML_BASE64 }}" |base64 -d  >>  credentials/tokens.yaml
+          ruby -r yaml -e 'puts YAML.load_file("credentials/tokens.yaml").to_a[0][1]' | jq .
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: false
+          ruby-version: 3.1
+      - name : bundle install
+        run: |
+          DEP_URL=https://github.com/takuya/ruby-google-xoauth2.git
+          gem "'takuya-xoauth2', git: '$DEP_URL'" >> Gemfile
+          bundle add mail 
+          bundle add midi-smtp-server
+          bundle add dotenv
+          bundle install
+      - name : rspecテスト(サーバー起動してSMTP送信、IMAPアクセスで受信メール削除）
+        run:
+          bundle exec rspec spec/
+
+
