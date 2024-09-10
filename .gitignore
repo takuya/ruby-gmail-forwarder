@@ -1,0 +1,10 @@
+.bin
+.idea
+Gemfile.lock
+vendor
+.rspec_status
+credentials/*
+!credentials/client_secret-sample.json
+.env
+.bundle
+*gem
