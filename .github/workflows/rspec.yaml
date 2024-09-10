@@ -15,7 +15,7 @@ jobs:
   Test-Proxy-SendMail:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      #- uses: actions/checkout@v4
       - name : apt
         run : |
           sudo apt-get update && sudo apt-get -y install jq
@@ -41,6 +41,7 @@ jobs:
           ruby-version: 3.1
       - name : bundle install
         run: |
+          bundle init
           DEP_URL=https://github.com/takuya/ruby-google-xoauth2.git
           echo gem "'takuya-xoauth2', git: '$DEP_URL'" >> Gemfile
           bundle add mail 
