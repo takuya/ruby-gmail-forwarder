@@ -5,16 +5,18 @@ The PROXY-SMTP server relay to GMAIL-SMTP. This intended run as server.
 ## Installing
 
 ```sh
+##  Gemfile initialized
 bundle init
-REPO_URL=https://github.com/takuya/ruby-gmail-forwarder.git
-echo "gem 'takuya-gmail-forwarder', :git '$REPO_URL'" >> Gemfile
-
 ## add dependency
 DEP_URL=https://github.com/takuya/ruby-google-xoauth2.git
 echo gem "'takuya-xoauth2', git: '$DEP_URL'" >> Gemfile
 bundle add mail 
 bundle add midi-smtp-server
 bundle add dotenv
+## add this repository
+REPO_URL=https://github.com/takuya/ruby-gmail-forwarder.git
+echo "gem 'takuya-gmail-forwarder', git: '$REPO_URL'" >> Gemfile
+
 bundle install 
 ```
 ### prepare credentials 

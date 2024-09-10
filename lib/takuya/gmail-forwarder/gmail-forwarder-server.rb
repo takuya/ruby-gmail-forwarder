@@ -1,7 +1,6 @@
 module Takuya
   # Server class
   class GMailForwarderServer<MidiSmtpServer::Smtpd
-    VERSION = '0.1.0'
 
     def initialize(user_id: nil, password: nil, client_secret_path: nil, token_path: nil, **args)
       super(internationalization_extensions: true, **args)
