@@ -2,9 +2,8 @@
 
 
 Gem::Specification.new do |spec|
-  ##
-  require_relative 'lib/takuya/gmail-forwarder'
 
+  
   spec.name          = "takuya-gmail-forwarder"
   spec.version       = '0.1.0'
   spec.authors       = ["takuya"]
