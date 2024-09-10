@@ -42,6 +42,7 @@ jobs:
       - name : bundle install
         run: |
           bundle install
+          bundle
       - name : rspecテスト(サーバー起動してSMTP送信、IMAPアクセスで受信メール削除）
         run:
           bundle exec rspec spec/
