@@ -11,7 +11,7 @@ echo "gem 'takuya-gmail-forwarder', :git '$REPO_URL'" >> Gemfile
 
 ## add dependency
 DEP_URL=https://github.com/takuya/ruby-google-xoauth2.git
-gem "'takuya-xoauth2', git: '$DEP_URL'" >> Gemfile
+echo gem "'takuya-xoauth2', git: '$DEP_URL'" >> Gemfile
 bundle add mail 
 bundle add midi-smtp-server
 bundle add dotenv

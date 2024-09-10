@@ -12,7 +12,7 @@ on:
     - cron:  '0 11 */4 * *'
 
 jobs:
-  test-GMail-API-xoauth2:
+  Test-Proxy-SendMail:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
       - name : bundle install
         run: |
           DEP_URL=https://github.com/takuya/ruby-google-xoauth2.git
-          gem "'takuya-xoauth2', git: '$DEP_URL'" >> Gemfile
+          echo gem "'takuya-xoauth2', git: '$DEP_URL'" >> Gemfile
           bundle add mail 
           bundle add midi-smtp-server
           bundle add dotenv
