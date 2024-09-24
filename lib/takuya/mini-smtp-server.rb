@@ -8,7 +8,7 @@ module Takuya
   # long time processing in on_message_data_event will be timeout.
   # To prevent timeout err, insert `on_disconnected` event handler
   class MidiSmtpServer<MidiSmtpServer::Smtpd
-    @mail_received = nil
+
 
     public
 
@@ -17,8 +17,12 @@ module Takuya
 
     protected
 
+    def on_connect_event(ctx)
+      @mail_received = Queue.new
+    end
+
     def on_message_data_event(ctx)
-      @mail_received = {
+      @mail_received << {
         envelope_from: ctx[:envelope][:from].gsub(%r'[<>]', ''),
         envelope_to: ctx[:envelope][:to].map { |e| e.gsub(%r'[<>]', '') },
         message_encoded: ctx[:message][:data]
@@ -30,20 +34,16 @@ module Takuya
     def serve_client(session, io)
       # @type io [TCPSocket]
       io = super(session, io)
-      binding_message_variable = lambda { |last_msg|
-        current_received = last_msg.dup
-        lambda {
-          on_message_received(
-            current_received[:envelope_from],
-            current_received[:envelope_from],
-            Mail.read_from_string(current_received[:message_encoded])
-          ) }
+      on_disconnected = lambda { |messages|
+        until messages.empty?
+          m = messages.pop
+          on_message_received(m[:envelope_from], m[:envelope_from], Mail.read_from_string(m[:message_encoded]))
+        end
       }
-      on_disconnected = binding_message_variable.call(@mail_received)
       ##
       io.close
-      Thread.pass
-      Thread.new{on_disconnected.call}.join
+      on_disconnected.call(@mail_received)
+      @mail_received = nil
     end
   end
 end

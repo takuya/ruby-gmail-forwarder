@@ -1,28 +1,30 @@
 RSpec.describe 'プロキシ・サーバーを起動してメールを送信する' do
-  ## OAUTH2に必要なデータ
-  $client_secret_path = ENV['client_secret_path']
-  $token_path         = ENV['token_path']
-  $user_id            = ENV['user_id']
   ##
-  Thread.abort_on_exception=true
+  Thread.abort_on_exception = true
 
   it "init proxy server and send mail, then check mail by by xoauth IMAP." do
+    ## OAUTH2に必要なデータ
+    $client_secret_path = ENV['client_secret_path']
+    $token_path = ENV['token_path']
+    $user_id = ENV['user_id']
     log_level = 4 # 0:DEBUG, 3:ERROR @see Logger
     $uuid = SecureRandom.uuid
     $host_ip = "127.0.25.25"
     $host_port = rand(49151...65535)
 
     $proxy_process_called = false
-    class MyTestServer < Takuya::GMailForwarderServer
-      def on_message_received(envelope_from,envelope_to,received_message)
+
+    class MyTestServer<Takuya::GMailForwarderServer
+      def on_message_received(envelope_from, envelope_to, received_message)
         proxy_smtp_sendmail(envelope_from, envelope_to, received_message)
         $proxy_process_called = true
       end
 
     end
-    $server = MyTestServer.new(hosts:$host_ip,ports:$host_port,
-    user_id: $user_id, client_secret_path: $client_secret_path, token_path: $token_path,logger_severity:log_level)
 
+    $server = MyTestServer.new(hosts: $host_ip, ports: $host_port,
+                               user_id: $user_id, client_secret_path: $client_secret_path, token_path: $token_path,
+                               logger_severity: log_level)
 
     def start_server
       ## no join, keep running in a thread.
@@ -48,7 +50,6 @@ RSpec.describe 'プロキシ・サーバーを起動してメールを送信す�
       require 'mail'
       require 'base64'
 
-
       mail = Mail.new
       mail.delivery_method(:smtp, address: $host_ip, port: $host_port)
       mail.from = $user_id
@@ -60,6 +61,7 @@ RSpec.describe 'プロキシ・サーバーを起動してメールを送信す�
       # #送信
       mail.deliver!
     end
+
     def check_mail_received
       imap = Takuya::XOAuth2::GMailXOAuth2.imap($client_secret_path, $token_path, $user_id)
       imap.select('INBOX')
@@ -71,7 +73,7 @@ RSpec.describe 'プロキシ・サーバーを起動してメールを送信す�
       end
 
       response = imap.close
-      response.name == 'OK' && message_ids.size > 0
+      response.name=='OK' && message_ids.size>0
     end
 
     def main
