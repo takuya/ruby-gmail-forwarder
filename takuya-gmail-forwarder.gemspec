@@ -3,7 +3,7 @@
 
 Gem::Specification.new do |spec|
 
-  
+
   spec.name          = "takuya-gmail-forwarder"
   spec.version       = '0.1.0'
   spec.authors       = ["takuya"]
@@ -27,10 +27,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # Dependencies
-  # spec.required_ruby_version = Gem::Requirement.new(">= 2.7.0")
+  spec.required_ruby_version = Gem::Requirement.new(">= 2.7.0")
   # spec.add_dependency 'takuya-xoauth2'
   # spec.add_dependency 'dot-env'
-  # spec.add_dependency 'midi-smtp-server'
-  # spec.add_dependency 'mail'
+  spec.add_dependency 'midi-smtp-server'
+  spec.add_dependency 'mail'
 
 end
