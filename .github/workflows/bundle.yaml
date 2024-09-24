@@ -30,6 +30,8 @@ jobs:
           ## add this repository
           REPO_URL=https://github.com/takuya/ruby-gmail-forwarder.git
           echo "gem 'takuya-gmail-forwarder', git: '$REPO_URL'" >> Gemfile
+          ## installing 
+          bundle install
           ## sample file
           cat <<EOS > sample.rb
           require 'takuya/gmail-forwarder'
