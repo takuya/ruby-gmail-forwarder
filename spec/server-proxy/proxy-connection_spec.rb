@@ -4,13 +4,23 @@ RSpec.describe 'プロキシ・サーバーを起動してメールを送信す�
   $token_path         = ENV['token_path']
   $user_id            = ENV['user_id']
   ##
+  Thread.abort_on_exception=true
 
   it "init proxy server and send mail, then check mail by by xoauth IMAP." do
     log_level = 4 # 0:DEBUG, 3:ERROR @see Logger
     $uuid = SecureRandom.uuid
     $host_ip = "127.0.25.25"
     $host_port = rand(49151...65535)
-    $server = Takuya::GMailForwarderServer.new(hosts:$host_ip,ports:$host_port,
+
+    $proxy_process_called = false
+    class MyTestServer < Takuya::GMailForwarderServer
+      def on_message_received(envelope_from,envelope_to,received_message)
+        proxy_smtp_sendmail(envelope_from, envelope_to, received_message)
+        $proxy_process_called = true
+      end
+
+    end
+    $server = MyTestServer.new(hosts:$host_ip,ports:$host_port,
     user_id: $user_id, client_secret_path: $client_secret_path, token_path: $token_path,logger_severity:log_level)
 
 
@@ -21,6 +31,9 @@ RSpec.describe 'プロキシ・サーバーを起動してメールを送信す�
     end
 
     def stop_server
+      until $proxy_process_called
+        sleep 1
+      end
       puts "stopping sever..."
       $server.stop
       until $server.stopped? do
@@ -46,7 +59,6 @@ RSpec.describe 'プロキシ・サーバーを起動してメールを送信す�
       mail.mime_version = '1.0'
       # #送信
       mail.deliver!
-      sleep 2
     end
     def check_mail_received
       imap = Takuya::XOAuth2::GMailXOAuth2.imap($client_secret_path, $token_path, $user_id)
