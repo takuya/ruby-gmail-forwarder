@@ -37,7 +37,7 @@ module Takuya
       on_disconnected = lambda { |messages|
         until messages.empty?
           m = messages.pop
-          on_message_received(m[:envelope_from], m[:envelope_from], Mail.read_from_string(m[:message_encoded]))
+          on_message_received(m[:envelope_from], m[:envelope_to], Mail.read_from_string(m[:message_encoded]))
         end
       }
       ##
