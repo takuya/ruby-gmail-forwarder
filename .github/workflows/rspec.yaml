@@ -9,18 +9,18 @@ on:
       - 'spec/**'
       - '.github/workflows/rspec.yaml'
   schedule:
-    - cron:  '0 11 */4 * *'
+    - cron: '0 11 */4 * *'
 
 jobs:
   Test-Proxy-SendMail:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name : apt
-        run : |
+      - name: apt
+        run: |
           sudo apt-get update && sudo apt-get -y install jq
-      - name : 環境変数から認証情報・トークンを取り出し。
-        run : |
+      - name: 環境変数から認証情報・トークンを取り出し。
+        run: |
           pwd
           echo 環境変数のメモ
           echo expected variables
@@ -39,11 +39,11 @@ jobs:
         with:
           bundler-cache: false
           ruby-version: 3.1
-      - name : bundle install
+      - name: bundle install
         run: |
           bundle install
           bundle
-      - name : rspecテスト(サーバー起動してSMTP送信、IMAPアクセスで受信メール削除）
+      - name: rspecテスト(サーバー起動してSMTP送信、IMAPアクセスで受信メール削除）
         run:
           bundle exec rspec spec/
 
