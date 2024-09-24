@@ -1,6 +1,6 @@
 module Takuya
   # Server class
-  class GMailForwarderServer<MidiSmtpServer::Smtpd
+  class GMailForwarderServer< Takuya::MidiSmtpServer
 
     def initialize(user_id: nil, password: nil, client_secret_path: nil, token_path: nil, **args)
       super(internationalization_extensions: true, **args)
@@ -10,19 +10,8 @@ module Takuya
       @user_id, @client_secret_path, @token_path, @password = user_id, client_secret_path, token_path, password
     end
 
-    # @param ctx [Hash]
-    def on_message_data_event(ctx)
-      # Output for debug
-      # logger.debug("[#{ctx[:envelope][:from]}] for recipient(s): [#{ctx[:envelope][:to]}]...")
-      mail = Mail.read_from_string(ctx[:message][:data])
-      # handle incoming mail, just show the message subject
-      # logger.debug(mail.subject)
-      from = ctx[:envelope][:from].gsub(%r'[<>]', '')
-      to = ctx[:envelope][:to].map { |e| e.gsub(%r'[<>]', '') }
-      proxy_smtp_sendmail(from, to, mail)
-    rescue => e
-      # ignore
-      e
+    def on_message_received(envelope_from,envelope_to,received_message)
+      proxy_smtp_sendmail(envelope_from, envelope_to, received_message)
     end
 
     # @param mail [Mail::Message]
@@ -42,7 +31,7 @@ module Takuya
     # @param envelope_from [String]
     # @param envelope_to [Enumerable]
     def on_proxy_send_mail(envelope_from, envelope_to, mail)
-      return envelope_from, envelope_to, mail
+      [ envelope_from, envelope_to, mail]
     end
 
     # @return [Net::SMTP]

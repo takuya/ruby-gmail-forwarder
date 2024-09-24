@@ -8,4 +8,5 @@ require 'mail'
 ## github
 require 'takuya/xoauth2'
 ##
+require_relative 'mini-smtp-server'
 require_relative './gmail-forwarder/gmail-forwarder-server'

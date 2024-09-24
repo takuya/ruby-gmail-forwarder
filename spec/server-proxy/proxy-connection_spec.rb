@@ -6,12 +6,12 @@ RSpec.describe 'プロキシ・サーバーを起動してメールを送信す�
   ##
 
   it "init proxy server and send mail, then check mail by by xoauth IMAP." do
-    Random.new_seed
+    log_level = 4 # 0:DEBUG, 3:ERROR @see Logger
     $uuid = SecureRandom.uuid
     $host_ip = "127.0.25.25"
     $host_port = rand(49151...65535)
     $server = Takuya::GMailForwarderServer.new(hosts:$host_ip,ports:$host_port,
-    user_id: $user_id, client_secret_path: $client_secret_path, token_path: $token_path)
+    user_id: $user_id, client_secret_path: $client_secret_path, token_path: $token_path,logger_severity:log_level)
 
 
     def start_server
