@@ -183,6 +183,6 @@ rspec ./spec/prevent-timeout_spec.rb:6 # MidiSmtpServer::Smtpd#on_message_data_e
 ```
 
 To prevent TCPError in smtp client, I wrote monkey patch.
-
+I added `io.disconnect` in server Thread, it works fine. but,cannot send 2 more mail in one connection.
 
 
