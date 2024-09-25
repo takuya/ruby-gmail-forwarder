@@ -25,7 +25,7 @@ RSpec.describe 'MidiSmtpServer::Smtpd on_message_data_event' do
     end
   end
 
-  it " can accept DATA twice mail.deliver! ." do
+  it " can accept DATA twice, 2 * mail.deliver!." do
     $long_task_end = false
     $received_messages = []
     $host_ip = "127.0.25.25"

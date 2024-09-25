@@ -1,6 +1,8 @@
 module Takuya
   # Server class
-  class GMailForwarderServer< Takuya::MidiSmtpServer
+  class GMailForwarderServer<Takuya::MidiSmtpServer
+
+    public
 
     def initialize(user_id: nil, password: nil, client_secret_path: nil, token_path: nil, **args)
       super(internationalization_extensions: true, **args)
@@ -10,7 +12,21 @@ module Takuya
       @user_id, @client_secret_path, @token_path, @password = user_id, client_secret_path, token_path, password
     end
 
-    def on_message_received(envelope_from,envelope_to,received_message)
+    ## modify proxied mail as your need.
+    # @return envelope_from, envelope_to, mail
+    # @param mail [Mail::Message]
+    # @param envelope_from [String]
+    # @param envelope_to [Enumerable]
+    def on_proxy_send_mail(envelope_from, envelope_to, mail)
+      [envelope_from, envelope_to, mail]
+    end
+
+    protected
+
+    # @param envelope_from [String]
+    # @param envelope_to [Enumerable]
+    # @param received_message [Mail::Message]
+    def on_message_received(envelope_from, envelope_to, received_message)
       proxy_smtp_sendmail(envelope_from, envelope_to, received_message)
     end
 
@@ -23,15 +39,6 @@ module Takuya
     rescue => e
       $stderr.puts e.message
       $stderr.puts e.backtrace
-    end
-
-    ## modify proxied mail as your need.
-    # @return envelope_from, envelope_to, mail
-    # @param mail [Mail::Message]
-    # @param envelope_from [String]
-    # @param envelope_to [Enumerable]
-    def on_proxy_send_mail(envelope_from, envelope_to, mail)
-      [ envelope_from, envelope_to, mail]
     end
 
     # @return [Net::SMTP]
@@ -58,8 +65,10 @@ module Takuya
       ## send mail
       res[:sendmail] = smtp.sendmail(mail.encoded, envelope_from, envelope_to)
       ## finish
-      res[:status] = smtp.finish
-      res[:sendmail]==nil && res[:status].to_i==221
+      res[:finish] = smtp.finish
+      result = res[:sendmail] && res[:sendmail].status && res[:sendmail].status.to_i==250 &&
+        res[:finish] && res[:finish].status && res[:finish].status.to_i==221
+      raise "Net::SMTP#sendmail failed." unless result
     end
   end
 end
