@@ -80,7 +80,7 @@ end
 
 ## midi-smtp has crucial error
 
-`MidiSmtpServer` is not supported , `long time task ` 
+`long time task ` in `MidiSmtpServer` is not supported , it will raise tcp error.
 
 Because of `not using Thread` and `not using EventEmitter` Event model, `MidiSmtpServer` will raise TCPError
 
